@@ -9,3 +9,7 @@ Revision history for Perl extension OpenOffice::Parse::SXC.
 	- Handles embedded newlines in cells
 	- Updated documentation for SXC.pm and sxc2csv
 
+0.03  19 February 2003
+	- Fixed a small bug in sxc2csv which sometimes caused
+	  non-null values to be trimmed from csv output when
+	  -no_trim was not specified.

@@ -137,10 +137,8 @@ sub row {
 
   if( ! $self->get_option( "no_trim" ) ) {
     # Trim emtpy values off the end of the csv (they're blank anyways)
-    for( reverse( 0 .. $#$row ) ) {
-      if( ! $row->[$_] ) {
-	pop @$row;
-      }
+    while( (! defined $row->[$#$row] or $row->[$#$row] eq "") and $#$row >= 0 ) {
+      pop @$row;
     }
   }
   if( $self->get_option( "quote_all" ) ) {
