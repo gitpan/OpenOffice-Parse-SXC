@@ -23,9 +23,12 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 our @EXPORT = qw(
-	
 );
-our $VERSION = '0.01';
+our $VERSION = '0.02';
+
+my %valid_options	= ( worksheets	=> 1,
+			    no_trim	=> 1,
+			  );
 
 ##################################################################
 # EXPORT_OK methods:
@@ -33,6 +36,7 @@ our $VERSION = '0.01';
 sub csv_quote {
   my $text		= shift;
   return ""		if( ! defined $text );
+  $text =~ s/\n//g;	# Remove all newlines!
   $text =~ s/\"/\"\"/g;
   if( $text =~ /[,"']/ ) {
     $text		= "\"$text\"";
@@ -175,20 +179,30 @@ sub end_handler {
   my $Expat		= shift;
   my $type		= shift;
 
-  if( $type eq "table:table-row" ) {		#
-#    print "X\n";
+  if( $type eq "table:table-row" ) {
     if( $self->accept_rows ) {
       $self->accept_cells( 0 );
-      $self->end_row;		# The row is done
+      $self->end_row;			# The row is done
     }
   }
   elsif( $type eq "table:table-cell" ) {
-#    print "E";
     if( $self->accept_cells ) {
       if( $self->accept_text ) {
 	$self->end_cell;		# The cell is done
       }
       $self->accept_text( 0 );
+    }
+  }
+  elsif( $type eq "text:p" ) {
+    # Kludging along to infinity...  The data in each cell
+    # comes in <text:p></text:p> tags.  Each is assumed to NOT end in
+    # a newline, however, if a newline is added (<Alt-Return>) it ends
+    # the previous <text:p> block and starts a new one.
+    #
+    # I'll add a newline after the end of each <text:p> tag, and then
+    # remove the last newline on the list when the cell is 'closed'.
+    if( $self->accept_text ) {
+      $self->append_cell_data( "\n" );
     }
   }
 }
@@ -257,6 +271,11 @@ sub start_handler {
       my $multiplier	= $args{"text:c"} || 1;				# Number of characters
       $self->append_cell_data( " " x $multiplier );
     }
+  }
+  elsif( $type eq "text:p" ) {
+    # Yikes, I initially wrote this without text:p in the start handler, instead
+    # relying on char_handler.  I SHOULD change the restrictions layer to handle
+    # accept_text_p... maybe when I have the energy
   }
 }
 
@@ -335,6 +354,14 @@ sub reset_cell_list {
 sub set_options {
   my $self			= shift;
   my %options			= @_;
+
+  # Check to ensure the options are valid
+  for( keys %options ) {
+    if( ! $valid_options{$_} ) {
+      die "Invalid option: '$_' ($options{$_}) passed as an option to ".ref $self."->set_options()";
+    }
+  }
+
   $self->{options}		= { %{$self->{options}}, %options };
 }
 
@@ -407,17 +434,13 @@ sub end_row {
 
 sub end_cell {
   my $self		= shift;
+  chomp $self->{current_cell_data};	# remove the last newline
   for( 1 .. $self->{cell_repeat} ) {
     push @{$self->{cells}}, $self->{current_cell_data};
   }
   $self->repeat_following_cell( 1 );	# Default to 1
   $self->clear_cell;
 }
-
-
-1;
-
-
 
 
 1;
@@ -490,6 +513,15 @@ text is displayed in the spreadsheet.
 This module requires XML::Parser and the compression utility unzip to be
 installed.
 
+=head1 DATA CONVERSIONS
+
+The data that this module will provide you with is exactly the same as
+what you would B<see> in the OpenOffice application.  This could be different
+than what you entered.  For example, this module would provide the results
+of a function, not the function itself.  If you enter 19.95 into a cell, and
+format that cell as a currency type, you would see $19.95 (for example), and
+that is what you would get using this module to parse the spreadsheet.
+
 =head1 EXPORT
 
 None by default.
@@ -504,7 +536,7 @@ Parses an SXC file returning a list of lists containing the cell data.
 
 Quotes a string in "CSV format".  The transformation converts each double-quote
 to two double-quotes,
-then double-quoting the entire string.
+then double-quoting the entire string.  B<All newlines are removed!>
 
 =item dump_sxc_file SXC_FILENAME:
 

@@ -16,135 +16,25 @@ ok(1); # If we made it this far, we're ok.
 # its man page ( perldoc Test ) for help writing this test script.
 
 
-$VAR1 = [
-          [
-            'This spreadsheet is a test sheet for the module OpenOffice::Parse::SXC',
-            '',
-            '',
-            '',
-            '',
-            '',
-            ''
-          ],
-          [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            ''
-          ],
-          [
-            'Group 1',
-            '',
-            '',
-            '',
-            '',
-            '',
-            ''
-          ],
-          [
-            '12345',
-            '7.00%',
-            '864.15',
-            '7.50%',
-            '925.88',
-            '',
-            '14135.03'
-          ],
-          [
-            '67890',
-            '7.00%',
-            '4752.3',
-            '7.50%',
-            '5091.75',
-            '',
-            '77734.05'
-          ],
-          [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            ''
-          ],
-          $VAR1->[5],
-          $VAR1->[5],
-          [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            ''
-          ],
-          [
-            'This is sheet 2'
-          ],
-          [
-            ''
-          ],
-          [
-            '1'
-          ],
-          [
-            '2'
-          ],
-          [
-            '3'
-          ],
-          [
-            '4'
-          ],
-          [
-            '5'
-          ],
-          [
-            '15'
-          ],
-          [
-            ''
-          ],
-          $VAR1->[17],
-          [
-            'This row (11) in spreadsheet test.sxc in sheet \'sheet2\' has five spaces now:     .  That\'s it.'
-          ],
-          [
-            ''
-          ]
-        ];
-
-
-
-
 
 test();
 
 
-
-
 sub test {
   my $SXC		= OpenOffice::Parse::SXC->new;
-  $SXC->parse( *DATA ) && ok(2);
+  $SXC->parse( *DATA ) && ok(1);
   use Data::Dumper;
   my @rows		= $SXC->parse_sxc_rows;
-  ( scalar @{$rows[0]} == 7 ? ok(3) : print "failed 3" );
+  ok( scalar @{$rows[0]} == 7 );
 
-  ( $rows[0][0] eq "This spreadsheet is a test sheet for the module OpenOffice::Parse::SXC" ? ok(4) : print "failed 4" );
+  ok( $rows[0][0] eq "This spreadsheet is a test sheet for the module OpenOffice::Parse::SXC" );
 
-  ( $rows[4][4] eq "5091.75" ? ok(5) : print "failed 5" );
+  ok( $rows[4][4] eq "5091.75" );
 
-  ( scalar @rows == 21 ? ok(6) : print "failed 6" );
+  ok( scalar @rows == 21 );
 
-  ( $rows[19][0] eq "This row (11) in spreadsheet test.sxc in sheet \'sheet2\' has five spaces now:     .  That\'s it."
-    ? ok(7) : '' );
+  ok( $rows[19][0] eq "This row (11) in spreadsheet test.sxc in sheet \'sheet2\' has five spaces now:     .  That\'s it." );
 
-  $SXC->set_options( "spreadsheets"	=> [ "Sheet1" ] );
-  $SXC->clear_parse_sxc_rows;
 }
 
 

@@ -3,5 +3,7 @@ Makefile.PL
 MANIFEST
 README
 SXC.pm
-test.pl
 bin/sxc2csv
+t/test.t
+t/test_data.t
+test_data.sxc

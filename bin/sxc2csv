@@ -299,6 +299,10 @@ sxc2csv is used to extract a csv file from an OpenOffice spreadsheet file.
               This is used for debugging, but it's also kinda
               fun.
 
+=head1 WARNINGS
+
+Newlines within cells are removed during the conversion.
+
 
 =head1 MAINTENANCE
 

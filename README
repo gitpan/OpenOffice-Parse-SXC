@@ -1,16 +1,12 @@
-OpenOffice/Parse/SXC version 0.01
+OpenOffice/Parse/SXC version 0.02
 =================================
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
+A library allowing you to extract data from SXC (the OpenOffice spreadsheet)
+files.
 
-A README file is required for CPAN modules since CPAN extracts the
-README file from a module distribution so that people browsing the
-archive can use it get an idea of the modules uses. It is usually a
-good idea to provide version information here so that people can
-decide whether fixes for the module are worth downloading.
+It also comes with the utility 'sxc2csv', which converts SXC files into CSV
+format.  
+
 
 INSTALLATION
 
@@ -21,15 +17,19 @@ To install this module type the following:
    make test
    make install
 
+
 DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-  blah blah blah
+Module XML::Parser
+
+Command line program: unzip
+
 
 COPYRIGHT AND LICENCE
 
-Put the correct copyright and licence information here.
+Copyright (C) 2003 Desmond Lee.  All rights reserved.
 
-Copyright (C) 2003 A. U. Thor blah blah blah
-
+This program is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
