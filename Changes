@@ -1,0 +1,6 @@
+Revision history for Perl extension OpenOffice::Parse::SXC.
+
+0.01  Thu Jan 23 14:33:35 2003
+	- original version; created by h2xs 1.21 with options
+		-A -X -n OpenOffice::Parse::SXC -v 0.01
+

@@ -1,0 +1,7 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+SXC.pm
+test.pl
+bin/sxc2csv
